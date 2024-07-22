@@ -6,6 +6,7 @@
     z-index: 2;
     background-color: var(--color-black);
     transition: all 0.3s linear;
+    min-height: 2rem;
 }
 .boxShadow {
     -webkit-box-shadow: 0 1rem 1.5rem 0.5rem var(--color-black);
@@ -22,6 +23,12 @@
     border: none !important;
     padding: 0;
     margin: 0;
+    height: 1rem;
+}
+.header button img,
+.pageTitle button img {
+    width: 1rem;
+    height: 1rem;
 }
 .pageTitle h4 {
     font-size: 1rem;
@@ -29,4 +36,28 @@
     line-height: 1.25rem;
     color: var(--color-white-01);
     text-transform: capitalize;
+}
+
+.searchInput {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    padding: 0.313rem 0.5rem;
+    background-color: var(--color-black);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.searchInput input,
+.searchInput input:focus,
+.searchInput input:focus-visible {
+    width: 100%;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    line-height: 0.75rem;
+    font-weight: 400;
+    color: var(--color-black);
+    border: none;
+    outline: none;
+    padding: 0.25rem 0.5rem;
 }

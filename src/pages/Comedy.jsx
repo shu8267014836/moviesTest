@@ -1,19 +1,15 @@
 import React from "react";
 import Header from "../components/header/Header";
 import MovieCard from "../components/movieCard/MovieCard";
-import styles from "./Comedy.module.css";
-
-import img01 from "../assets/imgs/img01.jpg";
-import img02 from "../assets/imgs/img02.jpg";
-import img03 from "../assets/imgs/img03.jpg";
-import img04 from "../assets/imgs/img04.jpg";
-import { apiEndPoint, base_url } from "../constant/constant";
+import styles from "./Comedy.module.css"; 
+import { base_url } from "../constant/constant";
 import { callDashGetMethod } from "../services/apiServices";
 import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const Comedy = () => {
   const [orgArray, setOrgArray] = useState([]);
+  const [tempArray, setTempArray] = useState([])
   const [pageFlag, setPageFlag] = useState(true);
   
 
@@ -22,11 +18,11 @@ const Comedy = () => {
 
   useEffect(() => {
     if (pageFlag) { 
-      handleGetApiData();
+      handleGetApiData(pageNum);
     }
   }, []);
 
-  const handleGetApiData = async () => {
+  const handleGetApiData = async (pageNum) => {
     let url = `${base_url}data/page${pageNum}.json`;
     await callDashGetMethod(url)
       .then((response) => {
@@ -34,7 +30,8 @@ const Comedy = () => {
           let resVal = response?.data?.page["content-items"]?.content;
           resVal = resVal?.length > 0 ? resVal : [];
           setOrgArray(orgArray.concat(resVal));
-           setTotalResult(response?.data?.page["total-content-items"])
+          setTempArray(orgArray.concat(resVal))
+          setTotalResult(response?.data?.page["total-content-items"])
           setPageFlag(false)
         }
       })
@@ -43,26 +40,38 @@ const Comedy = () => {
       });
   };
 
-  const fetchMoreData = async () => { 
-    console.log(totalResult,orgArray.length)
-     if(totalResult!==orgArray.length){
+  const fetchMoreData = async () => {  
+      if(totalResult.toString()!==orgArray.length.toString()){
         setPageNum(pageNum+1)
-        handleGetApiData()
+        handleGetApiData(pageNum+1)
     }; 
   };
 
+  const handleOnChange=(searchVal)=>{
+    if (searchVal === "") { setTempArray(orgArray); return; }
+    const filterBySearch = tempArray.filter((item) => {
+        if (item?.name?.toLowerCase()
+            .includes(searchVal.toLowerCase())) { return item; }
+    })
+     setTempArray(filterBySearch);
+  }
+
+
+
+   
+
   return (
     <div className="position-relative">
-      <Header />
+      <Header onchange={(e)=>handleOnChange(e)} />
       <InfiniteScroll
-        dataLength={orgArray.length}
+        dataLength={tempArray.length}
         next={fetchMoreData}
-        hasMore={orgArray.length !== totalResult}
-        loader={<h4>Loading...</h4>}
+        hasMore={tempArray.length !== totalResult}
+        loader={ totalResult.toString()!==orgArray.length.toString() ? <h4>Loading...</h4>:""}
       >
         <div className={styles.movieItem}>
-          {orgArray.length > 0 &&
-            orgArray.map((item, i) => (
+          {tempArray.length > 0 &&
+            tempArray.map((item, i) => (
               <MovieCard
                 cardClass={styles.cardItem}
                 key={i}
